@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Favorite Wrestlers</title>
+    <style type = "text/css">
+    button,
+    div,
+    form,
+    input{
+        margin: 10px;
+    }
+    </style>
+</head>
+
+<body>
+
+    <div id="buttons-view"></div>
+
+    <form id="wrestler-form">
+        <label for="wrestler-input">Add Your Favorite Wrestler</label>
+        <input type="text" id="movie-input">
+        <br>
+
+        <input id="add-wrestler" type="submit" value="Add Your Favorite Wrestler">
+    </form>
+
+    <div id="wrestlers-view"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    
+    var wrestlers = ["dwayne johnson", "steve austin"];
+    
+    function displayWrestlerInfo() {
+        var wrestler = $(this).attr("data-name");
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + wrestler + "&api_key=dc6zaTOxFJmzC&limit=10";
+        
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(function(response) {
+            console.log(queryURL);
+
+            console.log(response);
+
+            var results = response.data;
+
+            for (var i = 0; i < results.length; i++){
+
+            
+            var wrestlerDiv = $("<div class='wrestler'>");
+                
+            var rating = response.Rated;
+            
+            var p = $("<p>").text("Rating: " + results[i].rating);
+            
+            var wrestlerImage = $("<img>");
+
+            wrestlerImage.attr("src", results[i].images.fixed_height.url);
+
+            
+            
+            wrestlerDiv.append(p);
+            wrestlerDiv.append(wrestlerImage);
+
+            $("#wrestlers-view").prepend(wrestlerDiv);
+            }
+        });
+    }
+
+    function renderButtons() {
+
+        $("#buttons-view").empty();
+
+        for (var i = 0; i < wrestlers.length; i++) {
+            var a = $("<button>");
+
+                a.addClass("wrestler-btn");
+
+                a.attr("data-name", wrestlers[i]);
+
+                a.text(wrestlers[i]);
+
+                $("#buttons-view").append(a);
+        }
+    }
+
+    $("#add-wrestler").on("click", function(event) {
+        event.preventDefault();
+
+        var wrestler = $("#wrestler-input").val();
+
+        wrestlers.push(wrestler);
+
+        renderButtons();
+    })
+
+    $(document).on("click", ".wrestler-btn", displayWrestlerInfo);
+
+    renderButtons();
+     </script>
+    </div>
+    
+</body>
+</html>
